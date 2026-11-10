@@ -2,6 +2,10 @@
 import express from 'express';
 // nimportiw el middleware logger eli 3malneh
 import logger from './middlewares/logger.js';
+// nimportiw les middlewares mta3 el 404 w les erreurs
+import { routeIntrouvable, gestionErreurs } from './middlewares/erreurs.js';
+// nimportiw les routes mta3 l'authentification
+import authRoutes from './routes/authRoutes.js';
 
 // nasn3ou l'application express
 const app = express();
@@ -16,10 +20,13 @@ app.get('/', (req, res) => {
   res.json({ message: 'API Gestion de Projets et Tâches' });
 });
 
-// ken 7atta route ma jawbet, traja3 404 (lazem tkoun hiya el le5ra)
-app.use((req, res) => {
-  res.status(404).json({ message: `Route introuvable : ${req.method} ${req.originalUrl}` });
-});
+// kol route tebda b /api/auth temchi l authRoutes
+app.use('/api/auth', authRoutes);
+
+// ken 7atta route ma jawbet : 404 (ba3d les routes lkol)
+app.use(routeIntrouvable);
+// middleware erreurs : dima el le5er
+app.use(gestionErreurs);
 
 // nexportiw app bech nest3mlouha fi server.js
 export default app;

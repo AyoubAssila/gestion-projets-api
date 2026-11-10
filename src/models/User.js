@@ -1,6 +1,9 @@
 // nimportiw mongoose bech nasn3ou el schéma
 import mongoose from 'mongoose';
 
+// nimportiw bcryptjs bech ncryptiw el mot de passe
+import bcrypt from 'bcryptjs';
+
 // el schéma : y7added chnouwa yelzem ykoun fi kol utilisateur
 const userSchema = new mongoose.Schema(
   {
@@ -35,6 +38,19 @@ const userSchema = new mongoose.Schema(
   // mongoose yzid wa7dou el date de création (dateCreation) ki nasn3ou utilisateur
   { timestamps: { createdAt: 'dateCreation', updatedAt: false } },
 );
+
+// 9bal ma nsajlou utilisateur fil base, ncryptiw el mot de passe
+userSchema.pre('save', async function () {
+  // ken el mot de passe ma tbaddelch, ma n3awdouch ncryptiwh
+  if (!this.isModified('motDePasse')) return;
+  // n7awlou el mot de passe l hash (10 = 9addech mn marra y3awed el calcul)
+  this.motDePasse = await bcrypt.hash(this.motDePasse, 10);
+});
+
+// méthode tqaren el mot de passe eli ktbou el utilisateur m3a el hash (bech nest3mlouha fil login)
+userSchema.methods.verifierMotDePasse = function (motDePasse) {
+  return bcrypt.compare(motDePasse, this.motDePasse);
+};
 
 // nasn3ou el modèle User w nexportiwh (MongoDB bech yasna3 collection esmha "users")
 export default mongoose.model('User', userSchema);
