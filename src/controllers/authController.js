@@ -8,3 +8,9 @@ export async function register(req, res) {
   // nab3thou réponse 201 (created)
   res.status(201).json({ message: 'Utilisateur créé', user });
 }
+
+// controller login : y3ayet lel service w yraja3 el token
+export async function login(req, res) {
+  const token = await authService.connecter(req.body);
+  res.json({ message: 'Connexion réussie', token });
+}
