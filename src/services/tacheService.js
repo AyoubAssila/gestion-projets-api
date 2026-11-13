@@ -1,6 +1,7 @@
 // nimportiw les modèles
 import Tache from '../models/Tache.js';
 import Projet from '../models/Projet.js';
+import User from '../models/User.js';
 // nimportiw HttpError bech nlanciw erreurs b code HTTP
 import HttpError from '../utils/HttpError.js';
 // nimportiw les fonctions mta3 el recherche w el tri
@@ -82,4 +83,39 @@ export async function trouverParId(id, user) {
     { path: 'projet', select: 'nom statut' },
     { path: 'assigne', select: 'nom login' },
   ]);
+}
+
+// service : modifier tâche (el manager, el propriétaire mta3 el projet, wala el assigné)
+export async function modifier(id, { titre, description, statut, deadline }, user) {
+  const tache = await trouver(id);
+  await verifierAcces(tache, user, true);
+
+  // nbadlou ken les champs eli tba3thou (el "assigne" ma yetbaddelch hna)
+  if (titre !== undefined) tache.titre = titre;
+  if (description !== undefined) tache.description = description;
+  if (statut !== undefined) tache.statut = statut;
+  if (deadline !== undefined) tache.deadline = deadline;
+
+  // save() y3awed el validation (el statut lazem todo / doing / done)
+  return await tache.save();
+}
+
+// service : affecter tâche l utilisateur (el manager bark, el route m7amia b autoriser('manager'))
+export async function affecter(id, userId) {
+  const tache = await trouver(id);
+
+  // nverifiw eli el utilisateur mawjoud
+  const utilisateur = await User.findById(userId);
+  if (!utilisateur) throw new HttpError(404, 'Utilisateur introuvable');
+
+  tache.assigne = utilisateur._id;
+  await tache.save();
+  return await tache.populate('assigne', 'nom login');
+}
+
+// service : supprimer tâche (el manager wala el propriétaire mta3 el projet, mouch el assigné)
+export async function supprimer(id, user) {
+  const tache = await trouver(id);
+  await verifierAcces(tache, user, false);
+  await tache.deleteOne();
 }

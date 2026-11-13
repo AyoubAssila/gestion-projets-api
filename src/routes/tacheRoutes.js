@@ -1,9 +1,17 @@
 // nimportiw Router mel express
 import { Router } from 'express';
-// nimportiw el middleware mta3 el token
-import { verifierToken } from '../middlewares/auth.js';
+// nimportiw les middlewares mta3 el token w les rôles
+import { verifierToken, autoriser } from '../middlewares/auth.js';
 // nimportiw les controllers
-import { creerTache, listerTaches, mesTaches, getTache } from '../controllers/tacheController.js';
+import {
+  creerTache,
+  listerTaches,
+  mesTaches,
+  getTache,
+  modifierTache,
+  affecterTache,
+  supprimerTache,
+} from '../controllers/tacheController.js';
 
 const router = Router();
 
@@ -18,5 +26,11 @@ router.get('/', listerTaches);
 router.get('/mine', mesTaches);
 // GET /api/taches/:id -> une seule tâche
 router.get('/:id', getTache);
+// PATCH /api/taches/:id/affecter -> affecter une tâche (el manager bark)
+router.patch('/:id/affecter', autoriser('manager'), affecterTache);
+// PATCH /api/taches/:id -> modifier une tâche
+router.patch('/:id', modifierTache);
+// DELETE /api/taches/:id -> supprimer une tâche
+router.delete('/:id', supprimerTache);
 
 export default router;

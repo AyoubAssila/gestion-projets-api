@@ -24,3 +24,21 @@ export async function getTache(req, res) {
   const tache = await tacheService.trouverParId(req.params.id, req.user);
   res.json(tache);
 }
+
+// controller : modifier une tâche
+export async function modifierTache(req, res) {
+  const tache = await tacheService.modifier(req.params.id, req.body, req.user);
+  res.json({ message: 'Tâche modifiée', tache });
+}
+
+// controller : affecter une tâche l utilisateur (body : { "userId": "..." })
+export async function affecterTache(req, res) {
+  const tache = await tacheService.affecter(req.params.id, req.body.userId);
+  res.json({ message: 'Tâche affectée', tache });
+}
+
+// controller : supprimer une tâche
+export async function supprimerTache(req, res) {
+  await tacheService.supprimer(req.params.id, req.user);
+  res.json({ message: 'Tâche supprimée' });
+}
