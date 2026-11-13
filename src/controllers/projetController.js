@@ -26,8 +26,8 @@ export async function modifierProjet(req, res) {
   res.json({ message: 'Projet modifié', projet });
 }
 
-// controller : supprimer un projet
+// controller : supprimer un projet (m3a les tâches mte3ou)
 export async function supprimerProjet(req, res) {
-  await projetService.supprimer(req.params.id, req.user);
-  res.json({ message: 'Projet supprimé' });
+  const tachesSupprimees = await projetService.supprimer(req.params.id, req.user);
+  res.json({ message: 'Projet supprimé', tachesSupprimees });
 }

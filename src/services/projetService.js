@@ -1,5 +1,7 @@
 // nimportiw el modèle Projet
 import Projet from '../models/Projet.js';
+// nimportiw el modèle Tache (bech nfass5ou les tâches ki nfass5ou el projet)
+import Tache from '../models/Tache.js';
 // nimportiw HttpError bech nlanciw erreurs b code HTTP
 import HttpError from '../utils/HttpError.js';
 // nimportiw les fonctions mta3 el recherche w el tri
@@ -63,9 +65,14 @@ export async function modifier(id, { nom, description, statut }, user) {
   return await projet.save();
 }
 
-// service : supprimer projet
+// service : supprimer projet m3a les tâches mte3ou lkol
 export async function supprimer(id, user) {
   // nlawjou 3al projet w nverifiw el 7a9 (404 / 403)
   const projet = await trouverParId(id, user);
+  // nfass5ou les tâches lkol mta3 el projet hedha
+  const { deletedCount } = await Tache.deleteMany({ projet: projet._id });
+  // nfass5ou el projet
   await projet.deleteOne();
+  // nraj3ou 9addech mn tâche tfass5et
+  return deletedCount;
 }

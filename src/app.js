@@ -10,6 +10,8 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 // nimportiw les routes mta3 les projets
 import projetRoutes from './routes/projetRoutes.js';
+// nimportiw les routes mta3 les tâches
+import tacheRoutes from './routes/tacheRoutes.js';
 
 // nasn3ou l'application express
 const app = express();
@@ -30,6 +32,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 // kol route tebda b /api/projets temchi l projetRoutes
 app.use('/api/projets', projetRoutes);
+// kol route tebda b /api/taches temchi l tacheRoutes
+app.use('/api/taches', tacheRoutes);
 
 // ken 7atta route ma jawbet : 404 (ba3d les routes lkol)
 app.use(routeIntrouvable);
