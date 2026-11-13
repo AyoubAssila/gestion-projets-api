@@ -13,3 +13,21 @@ export async function listerProjets(req, res) {
   const projets = await projetService.lister(req.user, req.query);
   res.json({ total: projets.length, projets });
 }
+
+// controller : un seul projet (req.params.id = el id eli fil URL)
+export async function getProjet(req, res) {
+  const projet = await projetService.trouverParId(req.params.id, req.user);
+  res.json(projet);
+}
+
+// controller : modifier un projet
+export async function modifierProjet(req, res) {
+  const projet = await projetService.modifier(req.params.id, req.body, req.user);
+  res.json({ message: 'Projet modifié', projet });
+}
+
+// controller : supprimer un projet
+export async function supprimerProjet(req, res) {
+  await projetService.supprimer(req.params.id, req.user);
+  res.json({ message: 'Projet supprimé' });
+}

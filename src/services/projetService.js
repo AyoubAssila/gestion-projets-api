@@ -1,5 +1,7 @@
 // nimportiw el modèle Projet
 import Projet from '../models/Projet.js';
+// nimportiw HttpError bech nlanciw erreurs b code HTTP
+import HttpError from '../utils/HttpError.js';
 // nimportiw les fonctions mta3 el recherche w el tri
 import { regexRecherche, construireTri } from '../utils/recherche.js';
 
@@ -30,4 +32,40 @@ export async function lister(user, query) {
 
   // populate : nbadlou id mta3 el propriétaire b el nom w el login mte3ou
   return await Projet.find(filtre).sort(tri).populate('proprietaire', 'nom login');
+}
+
+// service : nlawjou 3la projet b el id mte3ou, w nverifiw ken 3andou el 7a9 ychoufou
+export async function trouverParId(id, user) {
+  const projet = await Projet.findById(id).populate('proprietaire', 'nom login');
+
+  // ken el projet mouch mawjoud -> 404
+  if (!projet) throw new HttpError(404, 'Projet introuvable');
+
+  // ken mouch manager w mouch howa el propriétaire -> 403
+  if (user.role !== 'manager' && !projet.proprietaire._id.equals(user._id)) {
+    throw new HttpError(403, 'Ce projet ne vous appartient pas');
+  }
+
+  return projet;
+}
+
+// service : modifier projet (nbadlou ken les champs eli tba3thou)
+export async function modifier(id, { nom, description, statut }, user) {
+  // nlawjou 3al projet w nverifiw el 7a9 (404 / 403)
+  const projet = await trouverParId(id, user);
+
+  // nbadlou ken el champ mawjoud fil body
+  if (nom !== undefined) projet.nom = nom;
+  if (description !== undefined) projet.description = description;
+  if (statut !== undefined) projet.statut = statut;
+
+  // save() y3awed y3adi el validation (mathalan el statut lazem ykoun fil enum)
+  return await projet.save();
+}
+
+// service : supprimer projet
+export async function supprimer(id, user) {
+  // nlawjou 3al projet w nverifiw el 7a9 (404 / 403)
+  const projet = await trouverParId(id, user);
+  await projet.deleteOne();
 }
