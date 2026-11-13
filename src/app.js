@@ -8,6 +8,8 @@ import { routeIntrouvable, gestionErreurs } from './middlewares/erreurs.js';
 import authRoutes from './routes/authRoutes.js';
 // nimportiw les routes mta3 les utilisateurs
 import userRoutes from './routes/userRoutes.js';
+// nimportiw les routes mta3 les projets
+import projetRoutes from './routes/projetRoutes.js';
 
 // nasn3ou l'application express
 const app = express();
@@ -26,6 +28,8 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 // kol route tebda b /api/users temchi l userRoutes
 app.use('/api/users', userRoutes);
+// kol route tebda b /api/projets temchi l projetRoutes
+app.use('/api/projets', projetRoutes);
 
 // ken 7atta route ma jawbet : 404 (ba3d les routes lkol)
 app.use(routeIntrouvable);
