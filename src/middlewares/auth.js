@@ -11,8 +11,8 @@ export async function verifierToken(req, res, next) {
     return res.status(401).json({ message: 'Token manquant' });
   }
 
-  // na5dhou el token wa7dou (el partie eli ba3d "Bearer ")
-  const token = header.split(' ')[1];
+  // na5dhou el token wa7dou : nna77iw "Bearer " w les espaces eli zaydin
+  const token = header.slice('Bearer '.length).trim();
 
   // nverifiw el token b el JWT_SECRET (ken mbaddel wala expiré -> erreur)
   let payload;
@@ -34,4 +34,18 @@ export async function verifierToken(req, res, next) {
   req.user = user;
   // n3addiw lel 7aja eli ba3dha (el controller)
   next();
+}
+
+// middleware ychouf ken el utilisateur 3andou el rôle el s7i7 (kima RolesGuard + @Roles fi Nest)
+// ...roles : najmou n3addiw rôle wa7ed wala barcha, mathalan autoriser('manager')
+export function autoriser(...roles) {
+  // traja3 middleware (fonction fiha req, res, next)
+  return (req, res, next) => {
+    // ken el rôle mta3 el utilisateur connecté mouch fil liste -> 403
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ message: `Accès réservé au rôle : ${roles.join(', ')}` });
+    }
+    // el rôle s7i7 : n3addiw
+    next();
+  };
 }
