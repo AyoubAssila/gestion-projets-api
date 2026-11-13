@@ -3,7 +3,7 @@ import { Router } from 'express';
 // nimportiw el middleware mta3 el token
 import { verifierToken } from '../middlewares/auth.js';
 // nimportiw les controllers
-import { creerProjet } from '../controllers/projetController.js';
+import { creerProjet, listerProjets } from '../controllers/projetController.js';
 
 const router = Router();
 
@@ -12,5 +12,7 @@ router.use(verifierToken);
 
 // POST /api/projets -> créer un projet
 router.post('/', creerProjet);
+// GET /api/projets -> liste (m3a ?search= &statut= &tri= &ordre=)
+router.get('/', listerProjets);
 
 export default router;

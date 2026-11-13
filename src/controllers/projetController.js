@@ -7,3 +7,9 @@ export async function creerProjet(req, res) {
   const projet = await projetService.creer(req.body, req.user);
   res.status(201).json({ message: 'Projet créé', projet });
 }
+
+// controller : liste des projets (req.query fih les paramètres eli ba3d "?" fil URL)
+export async function listerProjets(req, res) {
+  const projets = await projetService.lister(req.user, req.query);
+  res.json({ total: projets.length, projets });
+}
